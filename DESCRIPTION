@@ -1,0 +1,14 @@
+Package: ProjectExplicit
+Title: Shiny App inspired by Project Implicit
+Version: 0.1.0
+Authors@R: 
+    person("Lana", "Mrkonja", , "lana.mrkonja@student.uva.nl", role = c("aut", "cre"))
+Description: Shows several cognitive experiments and mental health questionnaires.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports: tidyverse
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
