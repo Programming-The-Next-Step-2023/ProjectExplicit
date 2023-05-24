@@ -1,0 +1,17 @@
+---
+title: "Stroop"
+author: "Matt Crump"
+date: "8/16/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+This example is the default jspsych template that gets loaded by the jspsychr package. It involves a simple Stroop experiment, with stimulus creation handled by R.
+
+The index.html file runs the experiment, the index.rmd file compiles the html experiment. 
+
+The run.R file will run compile and run the experiment in a local browser, with data saved to the data folder.
+

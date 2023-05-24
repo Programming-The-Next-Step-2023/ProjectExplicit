@@ -3200,8 +3200,8 @@ timeline.push(debrief);
 jsPsych.init({
     timeline: timeline,
     on_finish: function() {
-        jsPsych.data.displayData();
-        jspsychr.save_locally();
+        jsPsych.data.get().localSave('csv','C:/Users/mrkon/Documents/Experiments_Public_Github/test/Stroop/data/stroop_data.csv');
+        location.reload();
     }
 });
 </script>
