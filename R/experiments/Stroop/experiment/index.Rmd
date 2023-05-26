@@ -138,7 +138,8 @@ timeline.push(debrief);
 jsPsych.init({
     timeline: timeline,
     on_finish: function() {
-        jsPsych.data.get().localSave('csv','C:/Users/mrkon/Documents/Experiments_Public_Github/test/Stroop/data/stroop_data.csv');
+        var json_data = jsPsych.data.get().json();
+        Shiny.setInputValue("jspsych_results", json_data);
         location.reload();
     }
 });

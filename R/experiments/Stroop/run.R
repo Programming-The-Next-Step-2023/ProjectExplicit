@@ -10,12 +10,12 @@ library(jspsychr)
 # The assumption is your folder is inside an R project, which controls the default working directory
 
 # compiles the experiment file into html
-rmarkdown::render("Stroop/experiment/index.Rmd", "html_document")
+rmarkdown::render("R/experiments/Stroop/experiment/index.Rmd", "html_document")
 
 # runs the html in your browswer
 run_locally(path="Stroop",
             show_in = "browser",
             jspsychr_host = "127.0.0.1",
             jspsychr_port = 8000)
- 
+
 
