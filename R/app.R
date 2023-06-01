@@ -1,145 +1,179 @@
 #
 # This is a Shiny web application. You can run the application by clicking
 
-#devtools::load_all()
 #' @import shiny tidyverse bslib
 
 
+#' @title ProjectExplicit App UI
+#' @description Creates UI for the App.
+#' @returns A UI variable.
+#' @details For use within RShiny.
+#' @keywords internal
 #' @export
+
 App_UI <- function() {
   ui <- fluidPage(
-  #titlePanel("ProjectExplicit"),
-  theme = bslib::bs_theme(bg = "#1F1D21",
-                   #17212E
-                   fg = "#ebebec",
-                   secondary = "#bc0031",
-                   primary="#E4CCC0",
-                   base_font = bslib::font_google("Prompt"),
-                   code_font = bslib::font_google("JetBrains Mono")
-                   ),
-  navbarPage("ProjectExplicit",
-             tabPanel("About",
-                             mainPanel(includeMarkdown("inst/about.md"))),
-             navbarMenu("Experiments",
-                               tabPanel("Stroop",
-                                               fluidRow(column(6,
-                                                 "This is a classic Stroop Task.", br(),
-                                                 "It serves to measure your attentional control", br(), br(),
-                                                 "In this task you will see colored words and your task is to respond to the color of the font, while ignoring the meaning of the word.", br(),
-                                                 "The tasks takes approximately 5 minutes to complete."),
-                                                 column(6,
-                                                 actionButton("start_stroop", "Start Experiment"))),
-                                          tableOutput("table")),
-                               tabPanel("Stroop Deadline",
-                                               fluidRow(column(6,
-                                                 "This is a novel version of a classic Stroop Task.", br(),
-                                                 "It serves to measure your attentional control", br(), br(),
-                                                 "The Deadline version of the task means that the task gets more
-                                                 or less difficult depending on your performance", br(),
-                                                 "The task takes approximately 5 minutes to complete."),
-                                                 column(6,
-                                                 actionButton("start_sdl", "Start Experiment"))),
-                                 ),
-                               tabPanel("Digit Span Task",
-                                 fluidRow(column(6,
-                                                 "This is a classic Backwards Digit Span Task.", br(),
-                                                 "It serves to measure your working memory capacity", br(), br(),
-                                                 "In the task, you need to memorize and recall digits in the backwards order.", br(),
-                                                 "The task takes approximately 5 minutes to complete."),
-                                                 column(6,
-                                                 actionButton("start_digit", "Start Experiment")))),
-                               tabPanel("VMAC Task",
-                                               fluidRow(column(6,
-                                                 "This is a Value-Driven Attentional Capture Task.", br(),
-                                                 "It serves to measure your attentional bias towards rewards", br(), br(),
-                                                 "In the task, you need to respond to a dot inside of a unique shape.", br(),
-                                                 "The task takes approximately 10 minutes to complete."),
-                                                 column(6,
-                                                 actionButton("start_vmac", "Start Experiment")))),
-             ),
-             navbarMenu("Questionnaires",
-                        tabPanel("Alcohol Use",
-                                 lapply(1:8, function(i) {
-                                   build_questionnaire(i, "AUDIT_part1")
-                                   }),
-                                 lapply(9:10, function(i) {
-                                   build_questionnaire(i, "AUDIT_part2")
-                                   }),
-                                 ),
-                        tabPanel("Depression Symptoms",
-                                 lapply(1:21, function(i) {
-                                   build_questionnaire(i, "DASS")
-                                 }))),
-             tabPanel("Your Results"),
-  ),
+    theme = bslib::bs_theme(
+      bg = "#1F1D21",
+      fg = "#ebebec",
+      secondary = "#bc0031",
+      primary = "#E4CCC0",
+      base_font = bslib::font_google("Prompt"),
+      code_font = bslib::font_google("JetBrains Mono")
+    ),
+    navbarPage(
+      "ProjectExplicit", id = "inTabset",
+      tabPanel("About", value = "about_tab",
+               mainPanel(includeMarkdown("inst/about.md")),
+               sidebarPanel("Note: For best experience Select Stroop Deadline Task",
+                            br(),
+                            "Digit Span, VMAC and Classic Stroop Task are for fun only.")),
+      navbarMenu("Experiments",
+                 tabPanel("Classic Stroop", value = "stroop_tab",
+                          fluidRow(column(6, includeMarkdown("inst/stroop.md")),
+                                   column(6, actionButton("start_stroop", "Start Experiment"),
+                                          align = "center", style = "margin-top: 100px;"))),
+                 tabPanel("Stroop Deadline", value = "sdl_tab",
+                          fluidRow(column(6, includeMarkdown("inst/sdl.md")),
+                                   column(6, actionButton("start_sdl", "Start Experiment"),
+                                          align = "center", style = "margin-top: 100px;"))),
+                 tabPanel("Digit Span Task", value = "digit_tab",
+                          fluidRow(column(6, includeMarkdown("inst/digit.md")),
+                                   column(6, actionButton("start_digit", "Start Experiment"),
+                                          align = "center", style = "margin-top: 100px;"))),
+                 tabPanel("VMAC Task", value = "vmac_tab",
+                          fluidRow(column(6, includeMarkdown("inst/vmac.md")),
+                                   column(6, actionButton("start_vmac", "Start Experiment"),
+                                          align = "center", style = "margin-top: 100px;")))
+      ),
+      navbarMenu("Questionnaires",
+                 tabPanel("Alcohol Use", value = "audit_tab",
+                          lapply(1:8, function(i) {
+                            build_questionnaire(i, "AUDIT_part1")
+                          }),
+                          lapply(9:10, function(i) {
+                            build_questionnaire(i, "AUDIT_part2")
+                          }),
+                          actionButton("submit_audit", "Submit")),
+                 tabPanel("Depression Symptoms", value = "dass_tab",
+                          lapply(1:21, function(i) {
+                            build_questionnaire(i, "DASS")
+                          }),
+                          actionButton("submit_dass", "Submit"))),
+      tabPanel("Your Results", value = "results_tab",
+               DT::dataTableOutput("sample_table"),
+               plotOutput("AUDIT")),
+    ),
 
-  htmlOutput("experiment"),
-  DT::dataTableOutput("sample_table")
+    htmlOutput("experiment"),
   )
 }
 
-
+#' @title ProjectExplicit App Server
+#' @description Creates server for the App.
+#' @details For use within RShiny.
+#' @keywords internal
 #' @export
-App_server <- function(input, output) {
+
+App_server <- function(input, output, session) {
+  ## Start Experiments ----
   #start the Stroop experiment Action Button:
   observeEvent(input$start_stroop, {
     output$experiment <- renderUI({
-      return(includeHTML("inst/Stroop/experiment/index.html"))
-      })
+      return(includeHTML("inst/Stroop/index.html"))
     })
-  #start the StroopDeadline experiment Action Button:
+  })
+
+  #start StroopDeadline Action Button:
   observeEvent(input$start_sdl, {
     output$experiment <- renderUI({
-      return(includeHTML("inst/SDL/experiment/index.html"))
-      })
+      return(includeHTML("inst/SDL/index.html"))
     })
-  #start the Digit Span Action button:
+  })
+  #start Digit Span Action button:
   observeEvent(input$start_digit, {
     output$experiment <- renderUI({
       return(includeHTML("inst/Digit_span/index.html"))
-      })
     })
+  })
 
+  #start VMAC Action button:
+  observeEvent(input$start_vmac, {
+    output$experiment <- renderUI({
+      return(includeHTML("inst/VMAC_final/index.html"))
+    })
+  })
+
+  ## Get Experiment Data ----
+  #Retrieve Data upon task completion:
   observeEvent(input$stroop_results, {
-      data <- jsonlite::fromJSON(input$stroop_results)
-      file_name <- paste("data/", data$uniqueSubID[1], "_stroop_outcomes.csv", sep = "") #switch to ID and then paste into datafile name so it doesn't overwrite
-      write.csv(data, file = file_name)
-      })
+    data <- jsonlite::fromJSON(input$stroop_results)
+    file_name <- paste("data/userdata/", data$uniqueSubID[1], "_stroop_outcomes.csv", sep = "") #switch to ID and then paste into datafile name so it doesn't overwrite
+    write.csv(data, file = file_name)
+  })
   observeEvent(input$sdl_results, {
-      data <- jsonlite::fromJSON(input$sdl_results)
-      file_name <- paste("data/", data$uniqueSubID[2], "_sdl_outcomes.csv", sep = "") #switch to ID and then paste into datafile name so it doesn't overwrite
-      write.csv(data, file = file_name)
-    })
+    data <- jsonlite::fromJSON(input$sdl_results)
+    file_name <- paste("data/userdata/", data$uniqueSubID[2], "_sdl_outcomes.csv", sep = "") #switch to ID and then paste into datafile name so it doesn't overwrite
+    write.csv(data, file = file_name)
+  })
   observeEvent(input$digit_results, {
-      data <- jsonlite::fromJSON(input$digit_results)
-      file_name <- paste("data/", data$uniqueSubID[2], "_digit_outcomes.csv", sep = "") #switch to ID and then paste into datafile name so it doesn't overwrite
-      write.csv(data, file = file_name)
-    })
+    data <- jsonlite::fromJSON(input$digit_results)
+    file_name <- paste("data/userdata/", data$uniqueSubID[2], "_digit_outcomes.csv", sep = "") #switch to ID and then paste into datafile name so it doesn't overwrite
+    write.csv(data, file = file_name)
+  })
   observeEvent(input$vmac_results, {
-      data <- jsonlite::fromJSON(input$vmac_results)
-      data <- as.matrix(data)
-      file_name <- paste("data/", data$uniqueSubID[1], "_vmac_outcomes.csv", sep = "") #switch to ID and then paste into datafile name so it doesn't overwrite
-      write.csv(data, file = file_name)
-    })
-    # df <- eventReactive(input$jspsych_results, {
-    #   jsonlite::fromJSON(input$jspsych_results)
-    # })
-    #
-    # print(df$rt[1]) #switch to ID and then paste into datafile name so it doesn't overwrite
-    # write.csv(data, file = "C:/Users/mrkon/Documents/Experiments_Public_Github/ProjectExplicit/R/experiments/Stroop/data/test_outcomes.csv")
+    data <- jsonlite::fromJSON(input$vmac_results)
+    data <- as.matrix(data)
+    file_name <- paste("data/userdata/", data$uniqueSubID[1], "_vmac_outcomes.csv", sep = "") #switch to ID and then paste into datafile name so it doesn't overwrite
+    write.csv(data, file = file_name)
+  })
+  ## Save Questionnaire Data ----
+  #only save once clicked Submit button
+  observeEvent(input$submit_audit, {
+    audit_data <- c(
+      input$AUDIT_Q1, input$AUDIT_Q2, input$AUDIT_Q3, input$AUDIT_Q4, input$AUDIT_Q5,
+      input$AUDIT_Q6, input$AUDIT_Q7, input$AUDIT_Q8, input$AUDIT_Q9, input$AUDIT_Q10)
+    audit_outcome <- sum(as.numeric(audit_data[[2]]))
+    write.csv(audit_data, file = "data/userdata/audit_outcome.csv")
+    updateTabsetPanel(session, "inTabset",
+                      selected = "results_tab")
+  })
+  observeEvent(input$submit_dass, {
+    dass_data <- c(
+      input$DASS_Q1, input$DASS_Q2, input$DASS_Q3, input$DASS_Q4, input$DASS_Q5,
+      input$DASS_Q6, input$DASS_Q7, input$DASS_Q8, input$DASS_Q9, input$DASS_Q10,
+      input$DASS_Q11, input$DASS_Q12, input$DASS_Q13, input$DASS_Q14,
+      input$DASS_Q15, input$DASS_Q16, input$DASS_Q17, input$DASS_Q18,
+      input$DASS_Q19, input$DASS_Q20, input$DASS_Q21)
+    dass_outcome <- sum(as.numeric(dass_data[[2]]))
+    write.csv(dass_data, file = "data/userdata/dass_outcome.csv")
+    updateTabsetPanel(session, "inTabset",
+                      selected = "results_tab")
+  })
 
-
+  output$AUDIT <- renderPlot({
+    audit_data <- c(
+      input$AUDIT_Q1, input$AUDIT_Q2, input$AUDIT_Q3, input$AUDIT_Q4, input$AUDIT_Q5,
+      input$AUDIT_Q6, input$AUDIT_Q7, input$AUDIT_Q8, input$AUDIT_Q9, input$AUDIT_Q10)
+    audit_outcome <- sum(as.numeric(audit_data[[2]]))
+    xseq<-seq(1,7,.01)
+    densities <-dnorm(xseq, 4,1)
+    plot(xseq, densities, type = "l", lwd = 2, main = "Alcohol Use: \n How does your score compare to others?",  xlab = "Scores", yaxt='n', ylab = "")
+    abline(v=audit_outcome, col="blue")
+    text(audit_outcome, 0.1, "Your Score", col = "red")
+  })
 
 }
 
 
-# Run the application
-#' Title
-#'
-#' @return starts the app
+#' @title Run the ProjectExplicit App
+#' @description Starts the App.
+#' @details
+#' For best experience open in browser,
+#' although the app works in RStudio pop-up window too.
+#' @return Starts the app
 #' @export
-#shinyApp(ui = ui, server = server)
-startApp <- function() {
+
+start_App <- function() {
   shinyApp(ui = App_UI, server = App_server)
 }
-#C:/Users/mrkon/Documents/R/win-library/4.1/ProjectExplicit

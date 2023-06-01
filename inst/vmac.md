@@ -1,0 +1,14 @@
+Value Driven Attentional Capture Task
+================
+
+<p style="font-style:italic; font-size:10pt; color: #E4CCC0">
+Warning: This task will not produce personalized feedback on where you
+stand in relation to general population, as the “general population”
+data is missing.
+</p>
+
+This is a Value-Driven Attentional Capture Task. It serves to measure
+your attentional bias towards rewards.
+
+In the task, you need to respond to a dot inside of a unique shape. The
+task takes approximately 10 minutes or less to complete.
