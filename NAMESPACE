@@ -2,11 +2,12 @@
 
 export(App_UI)
 export(App_server)
-export(audit_plot)
+export(build_plot)
 export(build_questionnaire)
 export(merge_data_files)
 export(save_data)
 export(start_App)
 import(bslib)
+import(plotly)
 import(shiny)
 import(tidyverse)

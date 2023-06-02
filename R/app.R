@@ -1,7 +1,7 @@
 #
 # This is a Shiny web application. You can run the application by clicking
 
-#' @import shiny tidyverse bslib
+#' @import shiny tidyverse bslib plotly
 
 
 #' @title ProjectExplicit App UI
@@ -24,10 +24,11 @@ App_UI <- function() {
     navbarPage(
       "ProjectExplicit", id = "inTabset",
       tabPanel("About", value = "about_tab",
-               mainPanel(includeMarkdown("inst/about.md")),
-               sidebarPanel("Note: For best experience Select Stroop Deadline Task",
-                            br(),
-                            "Digit Span, VMAC and Classic Stroop Task are for fun only.")),
+               fluidRow(column(8, includeMarkdown("inst/about.md")),
+                        column(4, "Note: For the best experience select Stroop Deadline Task.",
+                            br(), br(),
+                            "Digit Span, VMAC and Classic Stroop Task are for fun only.",
+                            style = "margin-top: 80px; color: #E4CCC0"))),
       navbarMenu("Experiments",
                  tabPanel("Classic Stroop", value = "stroop_tab",
                           fluidRow(column(6, includeMarkdown("inst/stroop.md")),
@@ -61,8 +62,13 @@ App_UI <- function() {
                           }),
                           actionButton("submit_dass", "Submit"))),
       tabPanel("Your Results", value = "results_tab",
-               DT::dataTableOutput("sample_table"),
-               plotOutput("AUDIT")),
+               "How do you compare to the general population?",
+               plotlyOutput("AUDIT"),
+               plotlyOutput("DASS"),
+               plotlyOutput("SDL"),
+               plotlyOutput("Stroop"),
+               plotlyOutput("VMAC"),
+               plotlyOutput("Digit")),
     ),
 
     htmlOutput("experiment"),
@@ -108,24 +114,20 @@ App_server <- function(input, output, session) {
   #Retrieve Data upon task completion:
   observeEvent(input$stroop_results, {
     data <- jsonlite::fromJSON(input$stroop_results)
-    file_name <- paste("data/userdata/", data$uniqueSubID[1], "_stroop_outcomes.csv", sep = "") #switch to ID and then paste into datafile name so it doesn't overwrite
-    write.csv(data, file = file_name)
+    write.csv(data, file = "data/userdata/stroop_outcome.csv")
   })
   observeEvent(input$sdl_results, {
     data <- jsonlite::fromJSON(input$sdl_results)
-    file_name <- paste("data/userdata/", data$uniqueSubID[2], "_sdl_outcomes.csv", sep = "") #switch to ID and then paste into datafile name so it doesn't overwrite
-    write.csv(data, file = file_name)
+    write.csv(data, file = "data/userdata/sdl_outcome.csv")
   })
   observeEvent(input$digit_results, {
     data <- jsonlite::fromJSON(input$digit_results)
-    file_name <- paste("data/userdata/", data$uniqueSubID[2], "_digit_outcomes.csv", sep = "") #switch to ID and then paste into datafile name so it doesn't overwrite
-    write.csv(data, file = file_name)
+    write.csv(data, file = "data/userdata/digit_outcome.csv")
   })
   observeEvent(input$vmac_results, {
     data <- jsonlite::fromJSON(input$vmac_results)
     data <- as.matrix(data)
-    file_name <- paste("data/userdata/", data$uniqueSubID[1], "_vmac_outcomes.csv", sep = "") #switch to ID and then paste into datafile name so it doesn't overwrite
-    write.csv(data, file = file_name)
+    write.csv(data, file = "data/userdata/vmac_outcome.csv")
   })
   ## Save Questionnaire Data ----
   #only save once clicked Submit button
@@ -151,11 +153,18 @@ App_server <- function(input, output, session) {
                       selected = "results_tab")
   })
 
-  output$AUDIT <- renderPlot({
+  output$AUDIT <- plotly::renderPlotly({
     audit_data <- c(
       input$AUDIT_Q1, input$AUDIT_Q2, input$AUDIT_Q3, input$AUDIT_Q4, input$AUDIT_Q5,
       input$AUDIT_Q6, input$AUDIT_Q7, input$AUDIT_Q8, input$AUDIT_Q9, input$AUDIT_Q10)
-    audit_plot()
+    build_plot("AUDIT")
+  })
+
+  output$DASS <- plotly::renderPlotly({
+    build_plot("DASS")
+  })
+  output$SDL <- plotly::renderPlotly({
+    build_plot("SDL")
   })
 
 }
