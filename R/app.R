@@ -26,9 +26,9 @@ App_UI <- function() {
       tabPanel("About", value = "about_tab",
                fluidRow(column(8, includeMarkdown("inst/about.md")),
                         column(4, "Note: For the best experience select Stroop Deadline Task.",
-                            br(), br(),
-                            "Digit Span, VMAC and Classic Stroop Task are for fun only.",
-                            style = "margin-top: 80px; color: #E4CCC0"))),
+                               br(), br(),
+                               "Digit Span, VMAC and Classic Stroop Task are for fun only.",
+                               style = "margin-top: 80px; color: #E4CCC0"))),
       navbarMenu("Experiments",
                  tabPanel("Classic Stroop", value = "stroop_tab",
                           fluidRow(column(6, includeMarkdown("inst/stroop.md")),
@@ -63,12 +63,36 @@ App_UI <- function() {
                           actionButton("submit_dass", "Submit"))),
       tabPanel("Your Results", value = "results_tab",
                "How do you compare to the general population?",
-               plotlyOutput("AUDIT"),
-               plotlyOutput("DASS"),
-               plotlyOutput("SDL"),
-               plotlyOutput("Stroop"),
-               plotlyOutput("VMAC"),
-               plotlyOutput("Digit")),
+               style = "font-size:18pt",
+               br(), br(),
+               fluidRow(column(4, "Mental Health Questionnaires",
+                               style = "font-size:14pt",
+                               br(), br(),
+                               "Alcohol Use",
+                               plotlyOutput("AUDIT"),
+                               "Depression, Anxiety & Stress",
+                               plotlyOutput("DASS")),
+                        column(4, "Cognitive Tasks",
+                               style = "font-size:14pt",
+                               br(), br(),
+                               "Stroop Deadline",
+                               plotlyOutput("SDL"),
+                               plotlyOutput("Stroop"),
+                               plotlyOutput("VMAC")),
+                        column(4, "How are the tasks and mental health related to each other?",
+                               style = "font-size:14pt",
+                               column(6,
+                               selectInput("task", "Choose a Cognitive Task",
+                                           choices = c("Stroop Deadline")),
+                               style = "font-size:11pt"),
+                               column(6,
+                               selectInput("quest", "Choose a mental health Questionnaire",
+                                           choices = c("Alcohol Use", "Depression, Anxiety & Stress")),
+                               style = "font-size:11pt"),
+                               plotlyOutput("Correlation"))
+               )
+      ),
+
     ),
 
     htmlOutput("experiment"),
@@ -135,7 +159,6 @@ App_server <- function(input, output, session) {
     audit_data <- c(
       input$AUDIT_Q1, input$AUDIT_Q2, input$AUDIT_Q3, input$AUDIT_Q4, input$AUDIT_Q5,
       input$AUDIT_Q6, input$AUDIT_Q7, input$AUDIT_Q8, input$AUDIT_Q9, input$AUDIT_Q10)
-    audit_outcome <- sum(as.numeric(audit_data[[2]]))
     write.csv(audit_data, file = "data/userdata/audit_outcome.csv")
     updateTabsetPanel(session, "inTabset",
                       selected = "results_tab")
@@ -147,16 +170,12 @@ App_server <- function(input, output, session) {
       input$DASS_Q11, input$DASS_Q12, input$DASS_Q13, input$DASS_Q14,
       input$DASS_Q15, input$DASS_Q16, input$DASS_Q17, input$DASS_Q18,
       input$DASS_Q19, input$DASS_Q20, input$DASS_Q21)
-    dass_outcome <- sum(as.numeric(dass_data[[2]]))
     write.csv(dass_data, file = "data/userdata/dass_outcome.csv")
     updateTabsetPanel(session, "inTabset",
                       selected = "results_tab")
   })
 
   output$AUDIT <- plotly::renderPlotly({
-    audit_data <- c(
-      input$AUDIT_Q1, input$AUDIT_Q2, input$AUDIT_Q3, input$AUDIT_Q4, input$AUDIT_Q5,
-      input$AUDIT_Q6, input$AUDIT_Q7, input$AUDIT_Q8, input$AUDIT_Q9, input$AUDIT_Q10)
     build_plot("AUDIT")
   })
 
@@ -165,6 +184,9 @@ App_server <- function(input, output, session) {
   })
   output$SDL <- plotly::renderPlotly({
     build_plot("SDL")
+  })
+  output$Correlation <- plotly::renderPlotly({
+    build_regression_plot(input$task, input$quest)
   })
 
 }

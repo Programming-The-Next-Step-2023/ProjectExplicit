@@ -4,7 +4,7 @@
 \alias{save_data}
 \title{Saves the previously merged data file}
 \usage{
-save_data(wd, file_name = "stroop_data")
+save_data(wd, filename = "general_data.csv")
 }
 \arguments{
 \item{wd}{The absolute filepath of the folder in which you want the file to be saved.

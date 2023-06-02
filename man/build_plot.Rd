@@ -2,15 +2,18 @@
 % Please edit documentation in R/build_plots.R
 \name{build_plot}
 \alias{build_plot}
-\title{Generates an Alcohol Use plot}
+\title{Generates Tasks and Questionnaire plots}
 \usage{
 build_plot(plot)
+}
+\arguments{
+\item{plot}{character. Which data should be generated. "AUDIT", "DASS" or "SDL".}
 }
 \value{
 A plot for RShiny implementation.
 }
 \description{
-Generates ggplot with AUDIT Questionnaire scores of the general population
+Generates ggplot with Tasks and Questionnaire scores of the general population
 and the users own score.
 }
 \keyword{internal}

@@ -26,23 +26,30 @@ After completing the task and the questionnaire, the users receive personalized 
 # ProjectExplicit App Demo for Users
 Let's have a quick look at different pages of the app!
 
-![Screenshot of App](app.png)
 
 ## About
 Here you can find more information about ProjectExplicit, it's basic ideas, background and what inspired the project.
+
+![Screenshot of About](about.png)
 
 ## Experiments
 Under the `Experiments` Menu, you can find a list of available tasks aimed at measuring different cognitive processes. For example, the Stroop task measuring attentional control, or a Digit Span task measuring working memory capacity. 
 
 Each Experiment/Task page contains a short description of the task, as well as a button to launch the tasks.
 
+![Screenshot of Experiments](experiments.png)
+
 ## Questionnaires
 Under the `Questionnaires` Menu, you can find a list of available mental health questionnaires. These questionnaires measure the levels of symptoms of various mental health problems, such as substance use or depression. 
 
 Each Questionnaire page contains a short description of the questionnaire used, as well as a button to launch the survey.
 
+![Screenshot of Questionnaire](quest.png)
+
 ## Your Results
 `Your Results` page will show the user's personalized feedback after they've completed the tasks and questionnaires. It will show an interactive plot, where users can see where they stand in comparison to the general population, and check a what would happen if their task scores were different.
+
+![Screenshot of Results](results.png)
 
 # Running the App
 To run the app, the users should use RStudio, and initialize the app with the following code:
@@ -50,8 +57,14 @@ To run the app, the users should use RStudio, and initialize the app with the fo
 ```
 install.packages('ProjectExplicit')
 library(ProjectExplicit)
-startApp()
+start_App()
 ```
 # For Developers and Researchers
 
-[tbd]... Here you will find info in how the code works, and how you can use it as a template/starting point for your own project.
+There are several functions hidden to the users, that developers can use to implement their own plots, data, experiments or questionnaires. For more information on each of these functions see:
+
+```
+?build_plot
+?build_regression_plot
+?build_questionnaire
+```

@@ -2,12 +2,11 @@ library(ProjectExplicit)
 
 context("Merging files functionality")
 
-test_that("merging files works", {
-  merge_data_files("C:/Users/mrkon/Desktop/UvA/CoPY/CoPY_2.0/analysis/data/data_stroop")
-  
-  #checks that the original number of data files is the same as  length of the merged data frame
-  expect_equal(length(data_stroop), nrow(stroop_metrics))
-  
-  #checks that the participant ID and corresponding data are correctly merged with the original data
-  expect_equal(data_stroop[[1]]$uniqueSubID[1], stroop_metrics$uniqueSubID[1])
+test_that("retrieving and adding your data to general population data works", {
+  package_directory <- find.package("ProjectExplicit")
+  filename <- paste(package_directory, "/data/userdata/audit_outcome.csv", sep="")
+
+  general_data_added <- merge_data_files(filename)
+  general_data_original <- read.csv(paste(package_directory, "/data/general_data.csv", sep=""))
+  expect_equal(length(general_data_added), length(general_data_original)+1)
 })
