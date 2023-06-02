@@ -98,3 +98,4 @@ colnames(DASS) <- c("Question", paste(rep("Answer_",4), 1:4, sep=""))
 
 #Make Package Data
 usethis::use_data(DASS, overwrite=TRUE)
+

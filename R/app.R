@@ -155,12 +155,7 @@ App_server <- function(input, output, session) {
     audit_data <- c(
       input$AUDIT_Q1, input$AUDIT_Q2, input$AUDIT_Q3, input$AUDIT_Q4, input$AUDIT_Q5,
       input$AUDIT_Q6, input$AUDIT_Q7, input$AUDIT_Q8, input$AUDIT_Q9, input$AUDIT_Q10)
-    audit_outcome <- sum(as.numeric(audit_data[[2]]))
-    xseq<-seq(1,7,.01)
-    densities <-dnorm(xseq, 4,1)
-    plot(xseq, densities, type = "l", lwd = 2, main = "Alcohol Use: \n How does your score compare to others?",  xlab = "Scores", yaxt='n', ylab = "")
-    abline(v=audit_outcome, col="blue")
-    text(audit_outcome, 0.1, "Your Score", col = "red")
+    audit_plot()
   })
 
 }
