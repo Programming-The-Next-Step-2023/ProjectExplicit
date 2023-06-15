@@ -24,26 +24,26 @@ App_UI <- function() {
     navbarPage(
       "ProjectExplicit", id = "inTabset",
       tabPanel("About", value = "about_tab",
-               fluidRow(column(8, includeMarkdown("inst/about.md")),
+               fluidRow(column(8, includeMarkdown(system.file("about.md", package="ProjectExplicit"))),
                         column(4, "Note: For the best experience select Stroop Deadline Task.",
                                br(), br(),
                                "Digit Span, VMAC and Classic Stroop Task are for fun only.",
                                style = "margin-top: 80px; color: #E4CCC0"))),
       navbarMenu("Experiments",
                  tabPanel("Classic Stroop", value = "stroop_tab",
-                          fluidRow(column(6, includeMarkdown("inst/stroop.md")),
+                          fluidRow(column(6, includeMarkdown(system.file("stroop.md", package="ProjectExplicit"))),
                                    column(6, actionButton("start_stroop", "Start Experiment"),
                                           align = "center", style = "margin-top: 100px;"))),
                  tabPanel("Stroop Deadline", value = "sdl_tab",
-                          fluidRow(column(6, includeMarkdown("inst/sdl.md")),
+                          fluidRow(column(6, includeMarkdown(system.file("sdl.md", package="ProjectExplicit"))),
                                    column(6, actionButton("start_sdl", "Start Experiment"),
                                           align = "center", style = "margin-top: 100px;"))),
                  tabPanel("Digit Span Task", value = "digit_tab",
-                          fluidRow(column(6, includeMarkdown("inst/digit.md")),
+                          fluidRow(column(6, includeMarkdown(system.file("digit.md", package="ProjectExplicit"))),
                                    column(6, actionButton("start_digit", "Start Experiment"),
                                           align = "center", style = "margin-top: 100px;"))),
                  tabPanel("VMAC Task", value = "vmac_tab",
-                          fluidRow(column(6, includeMarkdown("inst/vmac.md")),
+                          fluidRow(column(6, includeMarkdown(system.file("vmac.md", package="ProjectExplicit"))),
                                    column(6, actionButton("start_vmac", "Start Experiment"),
                                           align = "center", style = "margin-top: 100px;")))
       ),
@@ -110,27 +110,27 @@ App_server <- function(input, output, session) {
   #start the Stroop experiment Action Button:
   observeEvent(input$start_stroop, {
     output$experiment <- renderUI({
-      return(includeHTML("inst/Stroop/index.html"))
+      return(includeHTML(system.file("Stroop/index.html", package="ProjectExplicit")))
     })
   })
 
   #start StroopDeadline Action Button:
   observeEvent(input$start_sdl, {
     output$experiment <- renderUI({
-      return(includeHTML("inst/SDL/index.html"))
+      return(includeHTML(system.file("SDL/index.html", package="ProjectExplicit")))
     })
   })
   #start Digit Span Action button:
   observeEvent(input$start_digit, {
     output$experiment <- renderUI({
-      return(includeHTML("inst/Digit_span/index.html"))
+      return(includeHTML(system.file("Digit_span/index.html", package="ProjectExplicit")))
     })
   })
 
   #start VMAC Action button:
   observeEvent(input$start_vmac, {
     output$experiment <- renderUI({
-      return(includeHTML("inst/VMAC_final/index.html"))
+      return(includeHTML(system.file("VMAC_final/index.html", package="ProjectExplicit")))
     })
   })
 
@@ -138,20 +138,24 @@ App_server <- function(input, output, session) {
   #Retrieve Data upon task completion:
   observeEvent(input$stroop_results, {
     data <- jsonlite::fromJSON(input$stroop_results)
-    write.csv(data, file = "data/userdata/stroop_outcome.csv")
+    file_path <- system.file("userdata/stroop_outcome.csv", package="ProjectExplicit")
+    write.csv(data, file = file_path)
   })
   observeEvent(input$sdl_results, {
     data <- jsonlite::fromJSON(input$sdl_results)
-    write.csv(data, file = "data/userdata/sdl_outcome.csv")
+    file_path <- system.file("userdata/sdl_outcome.csv", package="ProjectExplicit")
+    write.csv(data, file = file_path)
   })
   observeEvent(input$digit_results, {
     data <- jsonlite::fromJSON(input$digit_results)
-    write.csv(data, file = "data/userdata/digit_outcome.csv")
+    file_path <- system.file("userdata/digit_outcome.csv", package="ProjectExplicit")
+    write.csv(data, file = file_path)
   })
   observeEvent(input$vmac_results, {
     data <- jsonlite::fromJSON(input$vmac_results)
     data <- as.matrix(data)
-    write.csv(data, file = "data/userdata/vmac_outcome.csv")
+    file_path <- system.file("userdata/vmac_outcome.csv", package="ProjectExplicit")
+    write.csv(data, file = file_path)
   })
   ## Save Questionnaire Data ----
   #only save once clicked Submit button
@@ -159,7 +163,8 @@ App_server <- function(input, output, session) {
     audit_data <- c(
       input$AUDIT_Q1, input$AUDIT_Q2, input$AUDIT_Q3, input$AUDIT_Q4, input$AUDIT_Q5,
       input$AUDIT_Q6, input$AUDIT_Q7, input$AUDIT_Q8, input$AUDIT_Q9, input$AUDIT_Q10)
-    write.csv(audit_data, file = "data/userdata/audit_outcome.csv")
+    file_path <- system.file("userdata/audit_outcome.csv", package="ProjectExplicit")
+    write.csv(audit_data, file = file_path)
     updateTabsetPanel(session, "inTabset",
                       selected = "results_tab")
   })
@@ -170,7 +175,8 @@ App_server <- function(input, output, session) {
       input$DASS_Q11, input$DASS_Q12, input$DASS_Q13, input$DASS_Q14,
       input$DASS_Q15, input$DASS_Q16, input$DASS_Q17, input$DASS_Q18,
       input$DASS_Q19, input$DASS_Q20, input$DASS_Q21)
-    write.csv(dass_data, file = "data/userdata/dass_outcome.csv")
+    file_path <- system.file("userdata/dass_outcome.csv", package="ProjectExplicit")
+    write.csv(dass_data, file = file_path)
     updateTabsetPanel(session, "inTabset",
                       selected = "results_tab")
   })

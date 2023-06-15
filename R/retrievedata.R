@@ -27,9 +27,9 @@
 merge_data_files <- function(filename) {
 
 # read in csv files from data folder
-  package_directory <- find.package("ProjectExplicit")
-general_data <- read.csv(paste(package_directory, "/data/general_data.csv", sep=""))
-your_data <- read.csv(paste(package_directory, "/data/userdata/", filename, sep=""))
+  package_directory <- system.file(package = "ProjectExplicit")
+general_data <- read.csv(paste(package_directory, "/general_data.csv", sep=""))
+your_data <- read.csv(paste(package_directory, "/userdata/", filename, sep=""))
 
 #change column names of your data
 if (filename == "audit_outcome.csv") {

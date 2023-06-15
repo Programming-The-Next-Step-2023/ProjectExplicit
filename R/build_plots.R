@@ -16,7 +16,8 @@
 #' @export
 
 build_plot <- function(plot) {
-  data <- read.csv("data/general_data.csv")
+  package_path <- system.file(package = "ProjectExplicit")
+  data <- read.csv(paste(package_path, "/general_data.csv", sep=""))
 
   if(plot == "AUDIT") {
     ggplot_audit <- ggplot(data, aes(x = AUDIT)) +
@@ -32,8 +33,8 @@ build_plot <- function(plot) {
             axis.line = element_line(color = "#ebebec"),
             axis.ticks = element_line(colour = "#ebebec"))
 
-    if (file.exists("data/userdata/audit_outcome.csv")) {
-      your_data <- read.csv("data/userdata/audit_outcome.csv")
+    if (file.exists(paste(package_path, "/userdata/audit_outcome.csv", sep = ""))) {
+      your_data <- read.csv(paste(package_path, "/userdata/audit_outcome.csv", sep = ""))
       your_outcome <- sum(as.numeric(your_data[[2]]))
       ggplot_audit <- ggplot_audit +
         geom_vline(aes(xintercept=your_outcome), color = "#E4CCC0") +
@@ -66,8 +67,8 @@ build_plot <- function(plot) {
             axis.line = element_line(color = "#ebebec"),
             axis.ticks = element_line(colour = "#ebebec"))
 
-    if (file.exists("data/userdata/dass_outcome.csv")) {
-      your_data <- read.csv("data/userdata/dass_outcome.csv")
+    if (file.exists(paste(package_path, "/userdata/dass_outcome.csv", sep = ""))) {
+      your_data <- read.csv(paste(package_path, "/userdata/dass_outcome.csv", sep = ""))
       your_outcome <- sum(as.numeric(your_data[[2]]))
       ggplot_dass <- ggplot_dass +
         geom_vline(aes(xintercept=your_outcome), color = "#E4CCC0") +
@@ -99,8 +100,8 @@ build_plot <- function(plot) {
             axis.line = element_line(color = "#ebebec"),
             axis.ticks = element_line(colour = "#ebebec"))
 
-    if(file.exists("data/userdata/sdl_outcome.csv")) {
-      your_data <- read.csv("data/userdata/sdl_outcome.csv")
+    if(file.exists(paste(package_path, "/userdata/sdl_outcome.csv", sep = ""))) {
+      your_data <- read.csv(paste(package_path, "/userdata/sdl_outcome.csv", sep = ""))
       your_outcome <- tail(your_data$adaptive_window[!is.na(your_data$adaptive_window)], 1)
       ggplot_sdl <- ggplot_sdl +
         geom_vline(aes(xintercept=your_outcome), color = "#E4CCC0") +
@@ -133,28 +134,29 @@ build_plot <- function(plot) {
 #' @export
 
 build_regression_plot <- function(x, y) {
-  data <- read.csv("data/general_data.csv")
+  package_path <- system.file(package = "ProjectExplicit")
+  data <- read.csv(paste(package_path, "/general_data.csv", sep = ""))
   if (y == "Alcohol Use"){
     yaxis <- data$AUDIT
     ylabel <- "Alcohol Use Score"
-    if (file.exists("data/userdata/audit_outcome.csv")) {
-      your_data <- read.csv("data/userdata/audit_outcome.csv")
+    if (file.exists(paste(package_path, "/userdata/audit_outcome.csv", sep = ""))) {
+      your_data <- read.csv(paste(package_path, "/userdata/audit_outcome.csv", sep = ""))
       your_outcome_y <- sum(as.numeric(your_data[[2]]))
     }
 
   } else if (y == "Depression, Anxiety & Stress") {
     yaxis <- data$DASS
     ylabel <- "Depression, Anxiety & Stress Score"
-    if (file.exists("data/userdata/dass_outcome.csv")) {
-      your_data <- read.csv("data/userdata/dass_outcome.csv")
+    if (file.exists(paste(package_path, "/userdata/dass_outcome.csv", sep = ""))) {
+      your_data <- read.csv(paste(package_path, "/userdata/dass_outcome.csv", sep = ""))
       your_outcome_y <- sum(as.numeric(your_data[[2]]))
     }
   }
   if (x == "Stroop Deadline") {
     xaxis <- data$SDL_score
     xlabel <- "Stroop Deadline Score"
-    if (file.exists("data/userdata/sdl_outcome.csv")) {
-      your_data <- read.csv("data/userdata/sdl_outcome.csv")
+    if (file.exists(paste(package_path, "/userdata/sdl_outcome.csv", sep = ""))) {
+      your_data <- read.csv(paste(package_path, "/userdata/sdl_outcome.csv", sep = ""))
       your_outcome_x <- tail(your_data$adaptive_window[!is.na(your_data$adaptive_window)], 1)
     }
   }
